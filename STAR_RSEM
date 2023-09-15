@@ -1,0 +1,26 @@
+# STAR+RSEM for transcript quantification
+qlogin -q all.q -l h_rt=44:00:00 -l mem_free=70G -R yes -now n -pe smp 1
+
+#!/bin/bash
+
+# Preparation of the reference 
+
+rsem-prepare-reference --num-threads 20 --gtf hq.rn.collapse_capped.modified.gtf --star Mus_musculus.GRCm38.dna.primary_assembly.fa hq.rn2.rsemSTAR
+
+rsem-calculate-expression --paired-end --strand-specific --star --num-threads 15 --no-bam-output L224_R1.fastq L224_R2.fastq hq.rn2.rsemSTAR hq.rn2.rsemSTAR_L224
+rsem-calculate-expression --paired-end --strand-specific --star --num-threads 15 --no-bam-output L222_R1.fastq L222_R2.fastq hq.rn2.rsemSTAR hq.rn2.rsemSTAR_L222
+rsem-calculate-expression --paired-end --strand-specific --star --num-threads 15 --no-bam-output L223_R1.fastq L223_R2.fastq hq.rn2.rsemSTAR hq.rn2.rsemSTAR_L223
+rsem-calculate-expression --paired-end --strand-specific --star --num-threads 15 --no-bam-output L394_R1.fastq L394_R2.fastq hq.rn2.rsemSTAR hq.rn2.rsemSTAR_L394
+rsem-calculate-expression --paired-end --strand-specific --star --num-threads 15 --no-bam-output L393_R1.fastq L393_R2.fastq hq.rn2.rsemSTAR hq.rn2.rsemSTAR_L393
+rsem-calculate-expression --paired-end --strand-specific --star --num-threads 15 --no-bam-output L395_R1.fastq L395_R2.fastq hq.rn2.rsemSTAR hq.rn2.rsemSTAR_L395
+rsem-calculate-expression --paired-end --strand-specific --star --num-threads 15 --no-bam-output L356_R1.fastq L356_R2.fastq hq.rn2.rsemSTAR hq.rn2.rsemSTAR_L356
+rsem-calculate-expression --paired-end --strand-specific --star --num-threads 15 --no-bam-output L355_R1.fastq L355_R2.fastq hq.rn2.rsemSTAR hq.rn2.rsemSTAR_L355
+rsem-calculate-expression --paired-end --strand-specific --star --num-threads 15 --no-bam-output L357_R1.fastq L357_R2.fastq hq.rn2.rsemSTAR hq.rn2.rsemSTAR_L357
+
+
+# Generation of the data matrix
+
+rsem-generate-data-matrix hq.rn2.rsemSTAR_L222.isoforms.results hq.rn2.rsemSTAR_L355.isoforms.results hq.rn2.rsemSTAR_L393.isoforms.results hq.rn2.rsemSTAR_L223.isoforms.results hq.rn2.rsemSTAR_L356.isoforms.results hq.rn2.rsemSTAR_L394.isoforms.results hq.rn2.rsemSTAR_L224.isoforms.results hq.rn2.rsemSTAR_L357.isoforms.results hq.rn2.rsemSTAR_L395.isoforms.results > isoforms.rsemstar.counts.matrix
+cat isoforms.rsemstar.counts.matrix | sed 's/"//g' > isoforms.rsemstar.counts.matrix_rename.txt
+cat isoforms.rsemstar.counts.matrix_rename.txt | sed 's/hq.rn2.//g' | sed 's/_rsemSTAR//g' | sed 's/.isoforms.results//g' > isoforms.rsemstar.counts.matrix_rename1.txt
+

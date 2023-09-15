@@ -1,0 +1,19 @@
+# Prepare the reference with RSEM --bowtie2
+qlogin -q all.q -l h_rt=44:00:00 -l mem_free=70G -R yes -now n -pe smp 1
+
+rsem-prepare-reference --num-threads 15 --bowtie2 tama_sqanti_classification.fasta hq.rn2.collapse
+
+rsem-calculate-expression --paired-end --strand-specific --bowtie2 --num-threads 15 --no-bam-output L224_R1.fastq L224_R2.fastq hq.rn2.collapse hq.rn2.rsem_L224
+rsem-calculate-expression --paired-end --strand-specific --bowtie2 --num-threads 15 --no-bam-output L222_R1.fastq L222_R2.fastq hq.rn2.collapse hq.rn2.rsem_L222
+rsem-calculate-expression --paired-end --strand-specific --bowtie2 --num-threads 15 --no-bam-output L223_R1.fastq L223_R2.fastq hq.rn2.collapse hq.rn2.rsem_L223
+rsem-calculate-expression --paired-end --strand-specific --bowtie2 --num-threads 15 --no-bam-output L394_R1.fastq L394_R2.fastq hq.rn2.collapse hq.rn2.rsem_L394
+rsem-calculate-expression --paired-end --strand-specific --bowtie2 --num-threads 15 --no-bam-output L393_R1.fastq L393_R2.fastq hq.rn2.collapse hq.rn2.rsem_L393
+rsem-calculate-expression --paired-end --strand-specific --bowtie2 --num-threads 15 --no-bam-output L395_R1.fastq L395_R2.fastq hq.rn2.collapse hq.rn2.rsem_L395
+rsem-calculate-expression --paired-end --strand-specific --bowtie2 --num-threads 15 --no-bam-output L356_R1.fastq L356_R2.fastq hq.rn2.collapse hq.rn2.rsem_L356
+rsem-calculate-expression --paired-end --strand-specific --bowtie2 --num-threads 15 --no-bam-output L355_R1.fastq L355_R2.fastq hq.rn2.collapse hq.rn2.rsem_L355
+rsem-calculate-expression --paired-end --strand-specific --bowtie2 --num-threads 15 --no-bam-output L357_R1.fastq L357_R2.fastq hq.rn2.collapse hq.rn2.rsem_L357
+
+rsem-generate-data-matrix hq.rn2.rsem_L222.isoforms.results hq.rn2.rsem_L393.isoforms.results hq.rn2.rsem_L355.isoforms.results hq.rn2.rsem_L223.isoforms.results hq.rn2.rsem_L394.isoforms.results hq.rn2.rsem_L356.isoforms.results hq.rn2.rsem_L224.isoforms.results hq.rn2.rsem_L395.isoforms.results L357.isoforms.results  > isoforms.PP_DP_N.counts.matrix
+cat isoforms.PP_DP_N.counts.matrix | sed 's/"//g' > isoforms.rename.counts.matrix.txt
+cat isoforms.rename.counts.matrix.txt | sed 's/hq.rn2.rsem_//g' > isoforms.rename1.counts.matrix.txt
+cat isoforms.rename1.counts.matrix.txt | sed 's/.isoforms.results//g' > isoforms.rename2.counts.matrix.txt
